@@ -1,3 +1,6 @@
 # built executable files
 **/built
 
+# vscode dir
+**/.idea
+**/.vscode
