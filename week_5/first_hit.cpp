@@ -12,6 +12,7 @@ typedef K::Point_2      P;
 typedef K::Segment_2    S;
 typedef K::Ray_2        R;
 
+std::vector<S> segs;
 
 double floor_to_double(const K::FT& x){
     double a = std::floor(CGAL::to_double(x));
@@ -34,10 +35,19 @@ bool testcase(){
     P closest;
     K::FT min_d(std::numeric_limits<double>::max());
 
+    segs.clear();
     for (int i=0; i<n; i++){
         long r, s, t, u;
         std::cin >> r >> s >> t >> u;
-        S segment(P(r, s), P(t, u));
+        const S seg(P(r, s), P(t, u));
+        segs.push_back(seg);
+    } 
+    std::random_shuffle(segs.begin(),segs.end());
+    
+    for (S segment:segs){
+        if (min_d <= K::FT(1)) break;
+        if(min_d<CGAL::squared_distance(start,segment)) continue;
+        
         if (CGAL::do_intersect(ray, segment)){
             if (!found_closest) found_closest = true;
             auto inter = CGAL::intersection(ray, segment);
