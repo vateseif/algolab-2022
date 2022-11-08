@@ -11,6 +11,8 @@ typedef std::vector<std::unordered_map<int, VI>> VMVI;
 typedef std::unordered_set<int> SI;
 
 
+// TODO: remove memo_indices and just loop over each value in the map
+
 void sliding_window(VMVI &memo, SI &memo_indices, VI &soldiers, VI &waterway, int &k, int &l, int &max_islands){
 
   int w_size = waterway.size();
