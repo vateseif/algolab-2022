@@ -1,28 +1,50 @@
 ///1
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <unordered_map>
+#include <unordered_set>
 
 typedef std::vector<int>  VI;
 typedef std::vector<VI>   VVI;
+typedef std::vector<std::unordered_map<int, VI>> VMVI;
+typedef std::unordered_set<int> SI;
 
 
-void sliding_window(VI &soldiers, VI &waterway, VI &memo, int &max_islands, int &k){
+void sliding_window(VMVI &memo, SI &memo_indices, VI &soldiers, VI &waterway, int &k, int &l, int &max_islands){
 
   int w_size = waterway.size();
   int counter = 0;
-  int j = 0;
+  int j=0;
   for (int i=0; i<w_size; i++){
-    int s = waterway[i];  // start node sliding window
-    int e; // end node sliding window
-    while (j<w_size){
+    int s = waterway[i]; // starting island in sliding window
+    int e; // ending island in sliding window
+    while (j < w_size){
       e = waterway[j];
       counter += soldiers[e];
-      if (counter == k) max_islands = std::max(max_islands, j-i);
-      if (i == 0) memo.push_back(counter);
-      if (counter >= k) break;
+      if (counter > k) break;
+      if (counter==k) max_islands = std::max(max_islands, j-i+1);
+      if (s == 0){
+        if (memo[0][counter].size()==0) memo[0][counter]={-2, -2};
+        if (memo[1][counter].size()==0) memo[1][counter]={-2, -2};
+        if (j > memo[0][counter][0]){
+            memo[1][counter] = memo[0][counter];
+            memo[0][counter] = {j, l};
+            memo_indices.insert(counter);
+          }else if (j == memo[0][counter][0]){
+            if (memo[0][counter][1] != -1) memo[0][counter][1] = -1;
+            memo_indices.insert(counter);
+          }else if (j > memo[1][counter][0]){
+            memo[1][counter] = {j, l};
+            memo_indices.insert(counter);
+          }else if (j == memo[1][counter][0]){
+            if (memo[1][counter][1] != -1) memo[1][counter][1] = -1;
+            memo_indices.insert(counter);
+          }
+      }
       j++;
     }
-    if (counter < k) break;
+    if (counter <= k) break;
     counter -= soldiers[s] + soldiers[e];
   }
 
@@ -33,7 +55,7 @@ int main(){
   
   std::ios_base::sync_with_stdio(false);
   int T; std::cin >> T;
-
+  
   for (int t=0; t<T; t++){
 
     int n; std::cin >> n; // number of islands
@@ -56,34 +78,37 @@ int main(){
         }
     }
 
-    int max_islands = -1;
-    VVI memo(w);
-    for (int l=0; l<w; l++){
-      sliding_window(soldiers, waterways[l], memo[l], max_islands, k);
-      
-
-    }
-    
     int s0 = soldiers[0];
+    int max_islands = 0;
+    /*
+    memo stores max number of islands starting at 0 with j soldiers needed.
+    i = 2 (max and second max value)
+    j = k (total soldiers)
+    memo[i][j] = <islands starting at 0, waterways> 
+    */
+    VMVI memo(2);
+    SI memo_indices;
+    for (int l=0; l<w; l++){
+      sliding_window(memo, memo_indices, soldiers, waterways[l], k, l, max_islands);
+    }
+ 
     
-    for (int w1=0; w1<w-1; w1++){
-      for (int w2=w1+1; w2<w; w2++){
-        for (int i1=0; i1<memo[w1].size(); i1++){
-          for (int i2=max_islands-i1+1; i2<memo[w2].size(); i2++){
-            int s1 = memo[w1][i1];
-            int s2 = memo[w2][i2];
-            if (s1+s2-s0 == k) max_islands = std::max(max_islands, i1+i2);
-            if (s1+s2-s0 >= k) break;
-          }
-        }
+    for (auto i=memo_indices.begin(); i!=memo_indices.end(); i++){
+      if (memo[0][k+s0-*i].size()==0) continue;
+      int x1 = memo[0][*i][0];
+      int x2;
+      if (memo[0][*i][1] != -1 && memo[0][k+s0-*i][1] != -1 && memo[0][*i][1] == memo[0][k+s0-*i][1]){
+        x2 = memo[1][k+s0-*i][0];
+      }else{
+        x2 = memo[0][k+s0-*i][0];
       }
+      if (x2==-2) continue;
+      max_islands = std::max(max_islands, x1+x2+1);
     }
     
-    std::cout << max_islands + 1 << std::endl;
-
+    std::cout << max_islands << std::endl;
+    
   }
-  
-  
   
   return 0;
 }
