@@ -18,16 +18,19 @@ std::vector<S> legs;
 std::vector<std::vector<int>> memo;
 
 bool leg_in_map(const int& l, const int& b, const int& e){
-  for(int t:memo[l]) if (t>=b && t<=e-1) return true; // TODO: sort memo[l] so you can stop early
+  for(int t=b; t<=e-1; t++) if (memo[l][t]==1) return true; // TODO: sort memo[l] so you can stop early
 
   for (int t=b; t<=e-1; t++){ // TODO make memo mxn so you don't have to recheck when a leg l is not in triangle t
-    if (CGAL::do_intersect(legs[l], triangles[t])){
-      auto o = CGAL::intersection(legs[l], triangles[t]);
-      if (const S* os = boost::get<S>(&*o))
-        if (*os == legs[l] || legs[l].opposite() == *os){
-          memo[l].push_back(t);
-          return true;
-        }
+    if (memo[l][t]==0){  
+      if (CGAL::do_intersect(legs[l], triangles[t])){
+        auto o = CGAL::intersection(legs[l], triangles[t]);
+        if (const S* os = boost::get<S>(&*o))
+          if (*os == legs[l] || legs[l].opposite() == *os){
+            memo[l][t] = 1;
+            return true;
+          }
+      }
+      memo[l][t]=-1;
     }
   }
   
@@ -98,8 +101,8 @@ void testcase(){
   memo[i] is a vector containing the index of triangles fully containing leg i
   */
   memo.clear();
-  memo.resize(m-1);
-
+  memo.resize(m-1, std::vector<int>(n, 0));
+  
   int min_k = n;
   int e=1;
   for (int b=0; b<n; b++){
