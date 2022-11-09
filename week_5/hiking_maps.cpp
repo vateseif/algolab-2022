@@ -14,7 +14,7 @@ typedef K::Segment_2    S;
 typedef K::Triangle_2   T;
 
 std::vector<T> triangles;
-std::vector<S> legs;
+std::vector<P> path;
 std::vector<std::vector<int>> memo;
 
 bool leg_in_map(const int& l, const int& b, const int& e){
@@ -22,13 +22,9 @@ bool leg_in_map(const int& l, const int& b, const int& e){
 
   for (int t=b; t<=e-1; t++){ // TODO make memo mxn so you don't have to recheck when a leg l is not in triangle t
     if (memo[l][t]==0){  
-      if (CGAL::do_intersect(legs[l], triangles[t])){
-        auto o = CGAL::intersection(legs[l], triangles[t]);
-        if (const S* os = boost::get<S>(&*o))
-          if (*os == legs[l] || legs[l].opposite() == *os){
-            memo[l][t] = 1;
-            return true;
-          }
+      if (CGAL::do_intersect(path[l], triangles[t]) && CGAL::do_intersect(path[l+1], triangles[t])){
+        memo[l][t] = 1;
+        return true;
       }
       memo[l][t]=-1;
     }
@@ -78,17 +74,12 @@ void testcase(){
   int m, n;
   std::cin >> m >> n;
 
-  legs.clear();
-  legs.resize(m-1);
-  int x,y;
-  std::cin >> x >> y;
-  P p_old(x, y);
-  for (int i=1; i<m; i++){
+  path.clear();
+  path.resize(m);
+  for (int i=0; i<m; i++){
     int x, y;
     std::cin >> x >> y;
-    P p_new(x, y);
-    legs[i-1] = S(p_old, p_new);
-    p_old = p_new;
+    path[i] = P(x, y);
   }
 
   triangles.clear();
