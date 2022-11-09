@@ -18,7 +18,7 @@ std::vector<P> path;
 std::vector<std::vector<int>> memo;
 
 bool leg_in_map(const int& l, const int& b, const int& e){
-  for(int t=b; t<=e-1; t++) if (memo[l][t]==1) return true; // TODO: sort memo[l] so you can stop early
+  if (std::find(memo[l].begin()+b, memo[l].begin()+e, 1) != memo[l].begin()+e) return true;
 
   for (int t=b; t<=e-1; t++){ // TODO make memo mxn so you don't have to recheck when a leg l is not in triangle t
     if (memo[l][t]==0){  
