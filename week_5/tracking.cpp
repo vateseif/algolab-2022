@@ -1,4 +1,4 @@
-
+///3
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -14,11 +14,27 @@ typedef boost::graph_traits<weighted_graph>::edge_descriptor              edge_d
 typedef boost::graph_traits<weighted_graph>::vertex_descriptor            vertex_desc;
 
 std::vector<std::vector<int>> river_edges;
-std::vector<int> dmap_source, dmap_target;
+
+int n, x;
+
+int solve(weighted_graph& G, int target, int k_missing){
+  std::vector<int> dmap(n);
+  boost::dijkstra_shortest_paths(G, target,
+    boost::distance_map(boost::make_iterator_property_map(
+      dmap.begin(), boost::get(boost::vertex_index, G))));
+  if (k_missing == 0) return dmap[x];
+  int min_cost = std::numeric_limits<int>::max();
+  for (auto e : river_edges){
+    int p_c = std::min(solve(G, e[0], k_missing-1) + dmap[e[1]],
+                       solve(G, e[1], k_missing-1) + dmap[e[0]]);
+    min_cost = std::min(min_cost, p_c+e[2]);
+  }
+  return min_cost;
+}
 
 
 void testcase(){
-  int n, m, k, x, y;
+  int m, k, y;
   std::cin >> n >> m >> k >> x >> y;
 
   weighted_graph G(n);
@@ -32,29 +48,8 @@ void testcase(){
     if (d == 1) river_edges.push_back({a, b, c});
   }
 
-  // compute SP from source and from target
-  dmap_source.clear(); dmap_source.resize(n);
-  dmap_target.clear(); dmap_target.resize(n);
+  std::cout << solve(G, y, k) << std::endl;
   
-  boost::dijkstra_shortest_paths(G, x,
-    boost::distance_map(boost::make_iterator_property_map(
-      dmap_source.begin(), boost::get(boost::vertex_index, G))));
-  boost::dijkstra_shortest_paths(G, y,
-    boost::distance_map(boost::make_iterator_property_map(
-      dmap_target.begin(), boost::get(boost::vertex_index, G))));
-
-
-  /*
-  Find SP from x and from y to river edges then take one with lowest cost.
-  Works only for the case k=1. 
-  */
-  int min_cost = std::numeric_limits<int>::max();
-  for (auto e : river_edges){
-    int p_c = std::min(dmap_source[e[0]] + dmap_target[e[1]],
-                       dmap_source[e[1]] + dmap_target[e[0]]);
-    min_cost = std::min(p_c+e[2], min_cost);
-  }
-  std::cout << min_cost << std::endl;
 }
 
 
