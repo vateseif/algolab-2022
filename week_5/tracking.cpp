@@ -13,20 +13,22 @@ typedef boost::property_map<weighted_graph, boost::edge_weight_t>::type   weight
 typedef boost::graph_traits<weighted_graph>::edge_descriptor              edge_desc;
 typedef boost::graph_traits<weighted_graph>::vertex_descriptor            vertex_desc;
 
-std::vector<std::vector<int>> river_edges;
+std::vector<std::vector<int>> river_edges, memo;
 
 int n, x;
 
 int solve(weighted_graph& G, int target, int k_missing){
-  std::vector<int> dmap(n);
-  boost::dijkstra_shortest_paths(G, target,
+  if (memo[target].size() == 0){
+    memo[target].resize(n);
+    boost::dijkstra_shortest_paths(G, target,
     boost::distance_map(boost::make_iterator_property_map(
-      dmap.begin(), boost::get(boost::vertex_index, G))));
-  if (k_missing == 0) return dmap[x];
+      memo[target].begin(), boost::get(boost::vertex_index, G))));
+  }
+  if (k_missing == 0) return memo[target][x];
   int min_cost = std::numeric_limits<int>::max();
   for (auto e : river_edges){
-    int p_c = std::min(solve(G, e[0], k_missing-1) + dmap[e[1]],
-                       solve(G, e[1], k_missing-1) + dmap[e[0]]);
+    int p_c = std::min(solve(G, e[0], k_missing-1) + memo[target][e[1]],
+                       solve(G, e[1], k_missing-1) + memo[target][e[0]]);
     min_cost = std::min(min_cost, p_c+e[2]);
   }
   return min_cost;
@@ -47,7 +49,8 @@ void testcase(){
     e = boost::add_edge(a, b, G).first; weights[e]=c;
     if (d == 1) river_edges.push_back({a, b, c});
   }
-
+  memo.clear();
+  memo.resize(n);
   std::cout << solve(G, y, k) << std::endl;
   
 }
