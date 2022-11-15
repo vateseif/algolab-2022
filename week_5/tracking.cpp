@@ -13,51 +13,39 @@ typedef boost::property_map<weighted_graph, boost::edge_weight_t>::type   weight
 typedef boost::graph_traits<weighted_graph>::edge_descriptor              edge_desc;
 typedef boost::graph_traits<weighted_graph>::vertex_descriptor            vertex_desc;
 
-std::vector<std::vector<int>> river_edges, memo;
-
-int n, x;
-
-int cost(weighted_graph& G, int& a, int& b){
-  int s,t;
-  if (a<=b) {s=a; t=b;} else {s=b; t=a;}
-  if (memo[s].size() == 0){
-    memo[s].resize(n);
-    boost::dijkstra_shortest_paths(G, s,
-    boost::distance_map(boost::make_iterator_property_map(
-      memo[s].begin(), boost::get(boost::vertex_index, G))));
-  }
-  return memo[s][t];
-}
-
-int solve(weighted_graph& G, int target, int k_missing){
-  if (k_missing == 0) return cost(G, target, x);
-  int min_cost = std::numeric_limits<int>::max();
-  for (auto e : river_edges){
-    int p_c = std::min(solve(G, e[0], k_missing-1) + cost(G, target, e[1]),
-                       solve(G, e[1], k_missing-1) + cost(G, target, e[0]));
-    min_cost = std::min(min_cost, p_c+e[2]);
-  }
-  return min_cost;
-}
-
+std::vector<int> dmap;
 
 void testcase(){
-  int m, k, y;
+  int n, m, k, x, y;
   std::cin >> n >> m >> k >> x >> y;
 
-  weighted_graph G(n);
+  weighted_graph G(n*(k+1));
   weight_map weights = boost::get(boost::edge_weight, G);
-  river_edges.clear();
   edge_desc e;
+  
   for (int i=0; i<m; i++){
     int a, b, c, d;
     std::cin >> a >> b >> c >> d;
-    e = boost::add_edge(a, b, G).first; weights[e]=c;
-    if (d == 1) river_edges.push_back({a, b, c});
+    if (d == 1){
+      for (int l=0; l<k; l++){
+        e = boost::add_edge(n*l+a, n*(l+1)+b, G).first; weights[e]=c;
+        e = boost::add_edge(n*l+b, n*(l+1)+a, G).first; weights[e]=c;
+      }
+      e = boost::add_edge(n*k+a, n*k+b, G).first; weights[e]=c;
+    }else{
+      for (int l=0; l<k+1; l++){
+        e = boost::add_edge(n*l+a, n*l+b, G).first; weights[e]=c;
+      }
+    }
   }
-  memo.clear();
-  memo.resize(n);
-  std::cout << solve(G, y, k) << std::endl;
+
+  dmap.clear();
+  dmap.resize(n*(k+1));
+  boost::dijkstra_shortest_paths(G, x,
+    boost::distance_map(boost::make_iterator_property_map(
+      dmap.begin(), boost::get(boost::vertex_index, G))));
+
+  std::cout << dmap[n*k+y] << std::endl;
   
 }
 
