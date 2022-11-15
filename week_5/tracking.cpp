@@ -17,18 +17,24 @@ std::vector<std::vector<int>> river_edges, memo;
 
 int n, x;
 
-int solve(weighted_graph& G, int target, int k_missing){
-  if (memo[target].size() == 0){
-    memo[target].resize(n);
-    boost::dijkstra_shortest_paths(G, target,
+int cost(weighted_graph& G, int& a, int& b){
+  int s,t;
+  if (a<=b) {s=a; t=b;} else {s=b; t=a;}
+  if (memo[s].size() == 0){
+    memo[t].resize(n);
+    boost::dijkstra_shortest_paths(G, s,
     boost::distance_map(boost::make_iterator_property_map(
-      memo[target].begin(), boost::get(boost::vertex_index, G))));
+      memo[s].begin(), boost::get(boost::vertex_index, G))));
   }
-  if (k_missing == 0) return memo[target][x];
+  return memo[s][t];
+}
+
+int solve(weighted_graph& G, int target, int k_missing){
+  if (k_missing == 0) return cost(G, target, x);
   int min_cost = std::numeric_limits<int>::max();
   for (auto e : river_edges){
-    int p_c = std::min(solve(G, e[0], k_missing-1) + memo[target][e[1]],
-                       solve(G, e[1], k_missing-1) + memo[target][e[0]]);
+    int p_c = std::min(solve(G, e[0], k_missing-1) + cost(G, target, e[1]),
+                       solve(G, e[1], k_missing-1) + cost(G, target, e[0]));
     min_cost = std::min(min_cost, p_c+e[2]);
   }
   return min_cost;
