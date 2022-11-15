@@ -21,7 +21,7 @@ int cost(weighted_graph& G, int& a, int& b){
   int s,t;
   if (a<=b) {s=a; t=b;} else {s=b; t=a;}
   if (memo[s].size() == 0){
-    memo[t].resize(n);
+    memo[s].resize(n);
     boost::dijkstra_shortest_paths(G, s,
     boost::distance_map(boost::make_iterator_property_map(
       memo[s].begin(), boost::get(boost::vertex_index, G))));
