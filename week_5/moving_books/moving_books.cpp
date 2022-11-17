@@ -32,9 +32,8 @@ void testcase(){
   for (int i=0; i<m; i++) std::cin >> weight[i];
 
   std::sort(strength.begin(), strength.end(), std::greater<int>());
-  std::sort(weight.begin(), weight.end(), std::greater<int>());
 
-  if (weight[0] > strength[0]){
+  if (*std::max_element(weight.begin(), weight.end()) > strength[0]){
       std::cout << "impossible" << std::endl;
       return;
   }
