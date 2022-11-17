@@ -7,14 +7,15 @@
 #define trace(x) std::cerr << #x << " = " << x << std::endl;
 
 int n, m;
-std::vector<int> strength, weight;
-std::multiset<int, std::greater<int>> ws;
+std::vector<int> strength;
+std::multiset<int> ws;
 
 void pick_box(int& left){
   for (int i=0; i<n; i++){
-    auto j = ws.lower_bound(strength[i]);
-    if (j != ws.end()){
-      ws.erase(j);
+    int s = strength[i];
+    auto w = ws.lower_bound(s);
+    if (w != ws.end()){
+      ws.erase(w);
       left--;
     }else{
       break;
@@ -22,24 +23,22 @@ void pick_box(int& left){
   }
 }
 
+
 void testcase(){
   std::cin >> n >> m;
 
   strength.clear(); strength.resize(n);
-  for (int i=0; i<n; i++) std::cin >> strength[i];
+  for (int i=0; i<n; i++) {int s; std::cin >> s; strength[i] = -s;}
 
-  weight.clear(); weight.resize(m);
-  for (int i=0; i<m; i++) std::cin >> weight[i];
+  ws.clear();
+  for (int i=0; i<m; i++) {int w; std::cin >> w; ws.insert(-w);};
 
-  std::sort(strength.begin(), strength.end(), std::greater<int>());
+  std::sort(strength.begin(), strength.end());
 
-  if (*std::max_element(weight.begin(), weight.end()) > strength[0]){
+  if (*ws.begin() < strength[0]){
       std::cout << "impossible" << std::endl;
       return;
   }
-  
-  ws.clear();
-  for (int w:weight) ws.insert(w);
 
   /*
   greedy: strongest person starts by picking heaviest box he/she can lift
@@ -51,7 +50,7 @@ void testcase(){
     t++;
   }
 
-  std::cout << 3*(t-1) + 2 << std::endl;
+  std::cout << 3*t - 1 << std::endl;
 
 }
 
