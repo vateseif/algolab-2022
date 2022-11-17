@@ -25,7 +25,7 @@
 | First Hit               | Week 04 |                      | Solved      |
 | Tracking*               | Week 04 |                      | TODO        |
 | Boats                   | Week 05 |                      | Solved      |
-| Moving Books            | Week 05 |                      | Doing       |
+| Moving Books            | Week 05 |                      | `Doing`     |
 | Severus Snape           | Week 05 |                      | TODO        |
 | Asterix the Gaul        | Week 05 |                      | TODO        |
 | Motorcycles*            | Week 05 |                      | TODO        |
