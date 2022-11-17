@@ -1,5 +1,3 @@
-# algolab
-
 # Algorithms Lab 2022
 
 ## Problems
