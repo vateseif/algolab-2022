@@ -6,12 +6,11 @@
 #include <CGAL/Gmpz.h>
 
 // choose input type (input coefficients must fit)
-typedef int IT;
 // choose exact type for solver (CGAL::Gmpz or CGAL::Gmpq)
 typedef CGAL::Gmpz ET;
 
 // program and solution types
-typedef CGAL::Quadratic_program<IT> Program;
+typedef CGAL::Quadratic_program<ET> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 int main()
