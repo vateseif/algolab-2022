@@ -1,17 +1,14 @@
 #include <iostream>
 #include <CGAL/QP_models.h>
-#include <CGAL/number_utils.h>
 #include <CGAL/QP_functions.h>
 #include <CGAL/Gmpz.h>
 
 #define trace(x) std::cerr << #x << " = " << x << std::endl;
-// choose exact type for solver (CGAL::Gmpz or CGAL::Gmpq)
+
 typedef int IT;
 typedef CGAL::Gmpz ET;
-// program and solution types
 typedef CGAL::Quadratic_program<IT> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
-typedef Solution::Variable_value_iterator SVI;
 
 int n, d;
 
@@ -21,7 +18,6 @@ double floorGmpz(CGAL::Quotient<ET> r){
   while (out+1 <= r) out+=1;
   return out;
 }
-
 
 void objective(Program& lp){
   const int r = d;
@@ -50,27 +46,23 @@ void constraints(Program& lp){
 }
 
 bool testcase(){
-  
   std::cin >> n;
   if (n==0) return false;
   std::cin >> d;
-
+  // construct lp
   Program lp (CGAL::SMALLER, false, 0, false, 0); 
   constraints(lp);
   objective(lp);
-
-
+  //solve
   Solution s = CGAL::solve_linear_program(lp, ET());
-  
+  // output
   if (s.is_infeasible()){
     std::cout << "none" << std::endl;
   } else if (s.is_unbounded()){
     std::cout << "inf" << std::endl;
   } else {
-    CGAL::Quotient<ET> r = -s.objective_value();
-    std::cout << floorGmpz(r) << std::endl;
+    std::cout << floorGmpz(-s.objective_value()) << std::endl;
   }
-
   return true;
 }
 
