@@ -106,7 +106,7 @@ void testcase(){
 
 int main(){
   std::ios_base::sync_with_stdio(false);
-  std::cout << std::setprecision(10);
+  std::cout << std::setprecision(17); // 17 for doubles
   int T; std::cin>>T;
   while(T--)testcase();
   return 0;
