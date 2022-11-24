@@ -1,4 +1,3 @@
-///1
 #include <iostream>
 #include <vector>
 #include <cstdlib>
@@ -33,7 +32,7 @@ void objective(Program& lp){
 
 void constraints(Program& lp){
   int n_c = 0; // counter of constraints
-  // new constraints do not overlap
+  // new postesrs do not overlap
   for (int i=0; i<n-1; i++){
     for (int j=i+1; j<n; j++){
       long dx = std::abs(pn[i].first - pn[j].first);
@@ -52,8 +51,10 @@ void constraints(Program& lp){
       n_c++;
     }
   }
-  // old and new constraints do not overlap
+  // old and new posters do not overlap
   for (int i=0; i<n; i++){
+    long max_dx = std::numeric_limits<long>::max();
+    long max_dy = std::numeric_limits<long>::max();
     for (int j=0; j<m; j++){
       long dx = std::abs(pn[i].first - po[j].first);
       long dy = std::abs(pn[i].second - po[j].second);
@@ -61,9 +62,13 @@ void constraints(Program& lp){
       if (dx*h>dy*w){
         d = dx;
         b = w;
+        if (d > max_dx) continue;
+        max_dx = d;
       }else{
         d = dy;
         b = h;
+        if (d > max_dy) continue;
+        max_dy = d;
       }
       lp.set_a(i, n_c, b);
       lp.set_b(n_c, 2*d-b);
