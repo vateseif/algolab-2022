@@ -37,7 +37,7 @@ class edge_adder {
 int voc_size;
 std::unordered_map<char, int> letter_idx; 
 std::unordered_map<int, int>  note_letters_count;
-std::string vocabulary = "QWERTYUIOPASDFGHJKLZXCVBNM";
+std::string vocabulary = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 void init_vocabulary(){
   voc_size = vocabulary.size();
@@ -90,8 +90,6 @@ void testcase(){
     }
   }
   long max_flow = boost::push_relabel_max_flow(G, v_source, v_sink);
-  trace(max_flow);
-  trace(sum_counts);
   std::string out = max_flow==sum_counts ? "Yes" : "No";
   std::cout << out << std::endl;
 
