@@ -35,9 +35,12 @@ class edge_adder {
   }
 };
 int voc_size;
+std::string vocabulary = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+std::vector<std::string> front_page, rear_page;
 std::unordered_map<char, int> letter_idx; 
 std::unordered_map<int, int>  note_letters_count;
-std::string vocabulary = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+std::vector<std::vector<int>> double_letters_count;
 
 void init_vocabulary(){
   voc_size = vocabulary.size();
@@ -59,11 +62,12 @@ void testcase(){
     note_letters_count[i_idx]++;
   }
   // construct graph
-  graph G(voc_size+h*w);
+  graph G(voc_size*(voc_size+1));
   edge_adder adder(G);
   const vertex_desc v_source = boost::add_vertex(G);
   const vertex_desc v_sink = boost::add_vertex(G);
 
+  // add note nodes to graph
   long sum_counts = 0;
   for (int j=0; j<voc_size; j++){
     int letter_count = note_letters_count[j];
@@ -71,24 +75,42 @@ void testcase(){
     sum_counts += letter_count;
   }
   
+  double_letters_count.clear();
+  double_letters_count.resize(voc_size, std::vector<int>(voc_size, 0));
+
+  front_page.clear(); rear_page.clear();
+  front_page.resize(h); rear_page.resize(h);
+
+  
   for (int i=0;i<h;i++){
     std::string text;
     std::cin >> text;
-    for (int j=0; j<w; j++){
-      int j_letter = letter_idx[text[j]];
-      adder.add_edge(voc_size+i*w+j, j_letter, 1);
-      adder.add_edge(v_source, voc_size+i*w+j, 1);
-    }
+    front_page[i] = text;
   }
 
   for (int i=0;i<h;i++){
     std::string text;
     std::cin >> text;
+    rear_page[i] = text;
+  }
+
+  for (int i=0; i<h; i++){
     for (int j=0; j<w; j++){
-      int j_letter = letter_idx[text[w-1-j]];
-      adder.add_edge(voc_size+i*w+j, j_letter, 1);
+      int i_letter = letter_idx[front_page[i][j]];
+      int j_letter = letter_idx[rear_page[i][w-1-j]];
+      double_letters_count[i_letter][j_letter]++;
     }
   }
+
+  for (int i=0; i<voc_size; i++){
+    for (int j=0; j<voc_size; j++){
+      int ij_count = double_letters_count[i][j];
+      adder.add_edge(v_source, voc_size*(1+i)+j, ij_count);
+      adder.add_edge(voc_size*(1+i)+j, i, ij_count);
+      adder.add_edge(voc_size*(1+i)+j, j, ij_count);
+    }
+  }
+
   long max_flow = boost::push_relabel_max_flow(G, v_source, v_sink);
   std::string out = max_flow==sum_counts ? "Yes" : "No";
   std::cout << out << std::endl;
