@@ -68,11 +68,9 @@ void testcase(){
   const vertex_desc v_sink = boost::add_vertex(G);
 
   // add note nodes to graph
-  long sum_counts = 0;
   for (int j=0; j<voc_size; j++){
     int letter_count = note_letters_count[j];
     adder.add_edge(j, v_sink, letter_count);
-    sum_counts += letter_count;
   }
   
   double_letters_count.clear();
@@ -112,7 +110,7 @@ void testcase(){
   }
 
   long max_flow = boost::push_relabel_max_flow(G, v_source, v_sink);
-  std::string out = max_flow==sum_counts ? "Yes" : "No";
+  std::string out = max_flow==n ? "Yes" : "No";
   std::cout << out << std::endl;
 
   return;
