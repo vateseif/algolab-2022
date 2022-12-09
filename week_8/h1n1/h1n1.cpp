@@ -23,6 +23,7 @@ MaxDistanceMap distance, opened;
 bool find_exit(FaceHandle& face, const long& d){
   opened[face] = 1;
   if (t.is_infinite(face)) return true;
+  if (distance[face] >= d) return true;
   for (int i=0;i<3;i++){
     FaceHandle neighbor_face = face->neighbor(i);
     if (opened[neighbor_face]) continue;
@@ -30,8 +31,9 @@ bool find_exit(FaceHandle& face, const long& d){
     P b = face->vertex(face->cw(i))->point();
     long ab_distance = CGAL::squared_distance(a, b);
 
-    if (ab_distance >= 4*d){
-      if (find_exit(neighbor_face, d)) return true;
+    if (ab_distance >= 4*d && find_exit(neighbor_face, d)){
+      distance[face] = d;
+      return true;
     }
   }
   return false;
