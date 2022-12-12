@@ -1,3 +1,4 @@
+///2
 #include<iostream>
 // BGL includes
 #include <boost/graph/adjacency_list.hpp>
@@ -46,6 +47,8 @@ void testcase(){
   graph G(S+M+N);
   const vertex_desc v_source = boost::add_vertex(G);
   const vertex_desc v_sink = boost::add_vertex(G);
+  auto c_map = boost::get(boost::edge_capacity, G);
+  auto rc_map = boost::get(boost::edge_residual_capacity, G);
   edge_adder adder(G); 
 
   for (int i=0;i<S;i++){
@@ -64,14 +67,19 @@ void testcase(){
     for (int j=0;j<M;j++){
       int bij;
       std::cin>>bij;
-      adder.add_edge(S+j, S+M+i, 1, -bij);
+      adder.add_edge(S+j, S+M+i, 1, 100-bij);
     }
     adder.add_edge(S+M+i, v_sink, 1, 0);
   }
 
-  int flow = boost::push_relabel_max_flow(G, v_source, v_sink);
-  boost::cycle_canceling(G);
-  int cost = -boost::find_flow_cost(G);
+  boost::successive_shortest_path_nonnegative_weights(G, v_source, v_sink);
+  // Iterate over all edges leaving the source to sum up the flow values.
+  int flow = 0;
+  out_edge_it e, eend;
+  for(boost::tie(e, eend) = boost::out_edges(boost::vertex(v_source,G), G); e != eend; ++e) {
+      flow += c_map[*e] - rc_map[*e];     
+  }
+  int cost = 100*flow - boost::find_flow_cost(G);
   std::cout << flow << " " << cost << std::endl; 
 
 }
