@@ -2,48 +2,22 @@
 
 ## Problems
 
-| Task                    | Week    | Topics               | Status      |
-|-------------------------|---------|----------------------|-------------|
-| Build the Sum           | Week 01 |                      | Solved      |
-| Dominos                 | Week 01 |                      | Solved      |
-| Even Pairs              | Week 01 |                      | Solved      |
-| Even Matrices           | Week 01 |                      | TODO        |
-| Deck of Cards*          | Week 01 |                      | Solved      |
-| Burning Coins           | Week 02 |                      | TODO        |
-| Beach Bars              | Week 02 |                      | Solved      |
-| The Great Game          | Week 02 |                      | Solved      |
-| Search Snippets         | Week 02 |                      | TODO        |
-| San Francisco*          | Week 02 |                      | Solved      |
-| First Steps with BGL    | Week 03 |                      | Solved      |
-| Ant Challenge           | Week 03 |                      | TODO        |
-| Buddy Selection         | Week 03 |                      | Solved      |
-| Important Bridges       | Week 03 |                      | Solved      |
-| Greyjoy*                | Week 03 |                      | Solved      |
-| Hit                     | Week 04 |                      | TODO        |
-| Antenna                 | Week 04 |                      | TODO        |
-| Hiking Map              | Week 04 |                      | TODO        |
-| First Hit               | Week 04 |                      | Solved      |
-| Tracking*               | Week 04 |                      | TODO        |
-| Boats                   | Week 05 |                      | Solved      |
-| Moving Books            | Week 05 |                      | `Doing`     |
-| Severus Snape           | Week 05 |                      | TODO        |
-| Asterix the Gaul        | Week 05 |                      | TODO        |
-| Motorcycles*            | Week 05 |                      | TODO        |
-| Maximize It             | Week 06 |                      | TODO        |
-| Diet                    | Week 06 |                      | TODO        |
-| Inball                  | Week 06 |                      | TODO        |
-| Suez                    | Week 06 |                      | TODO        |
-| Octopusy*               | Week 06 |                      | TODO        |
-| Coin Tossing Tournament | Week 07 |                      | TODO        |
-| Shopping Trip           | Week 07 |                      | TODO        |
-| London                  | Week 07 |                      | TODO        |
-| Tiles                   | Week 07 |                      | TODO        |
-| The Augean Stables*     | Week 07 |                      | TODO        |
-| Bistro                  | Week 08 |                      | TODO        |
-| Light the Stage         | Week 08 |                      | TODO        |
-| H1N1                    | Week 08 |                      | TODO        |
-| Germs                   | Week 08 |                      | TODO        |
-| Knights*                | Week 08 |                      | TODO        |
+## Featured solutions - ordered by weeks
+| Week | Problem of the Week | 1st problem | 2nd problem | 3rd problem | 4th problem |
+| --- | --- | --- | --- | --- | --- |
+| 1 | | [Build the Sum]() | [Dominoes]() | [Even Matrices]() | [Even Pairs]() |
+| 2 | [Deck of Cards]() | [Beach Bars]() | [Burning Coins]() | [Search Snippets]() | [The Great Game]() |
+| 3 | [San Francisco]() | [Importan Bridges]() | [Buddy Selection]() | [Ant Challenge]() | [First steps with BGL]() |
+| 4 | [Greyjoy](https://github.com/vateseif/algolab/tree/main/week_4/greyjoy) | [Antenna]() | [Hiking Maps](https://github.com/vateseif/algolab/tree/main/week_4/hiking_maps) | [Hit] | [First Hit](https://github.com/vateseif/algolab/tree/main/week_4/first_hit) |
+| 5 | [Tracking]() | [Moving Books](https://github.com/vateseif/algolab/tree/main/week_5/moving_books) | [Severus Snape](https://github.com/vateseif/algolab/tree/main/week_5/severus_snape) | [Boats](https://github.com/vateseif/algolab/tree/main/week_5/boats) | [Asterix The Gaul] |
+| 6 | [Motorcycles](https://github.com/vateseif/algolab/tree/main/week_6/motorcycles) | [What is the maximum?](https://github.com/vateseif/algolab/tree/main/week_6/what_is_the_maximum) | [Diet] | [Inball](https://github.com/vateseif/algolab/tree/main/week_6/inball) | [Suez](https://github.com/vateseif/algolab/tree/main/week_6/suez) |
+| 7 | [Octopussy] | [Coin Tossing Tournament](https://github.com/vateseif/algolab/tree/main/week_7/coin_tossing_tournament) | [Shopping Trip] | [London](https://github.com/vateseif/algolab/tree/main/week_7/london) | [Tiles] |
+| 8 | [Augean Stables] | [Bistro](https://github.com/vateseif/algolab/tree/main/week_8/bistro) | [Light The Stage] | [Germs] | [H1N1](https://github.com/vateseif/algolab/tree/main/week_8/h1n1) |
+| 9 | [Knights] | [Algocoon](https://github.com/vateseif/algolab/tree/main/week_9/algocoon) | [Casino Royale] | [Placing Knights](https://github.com/vateseif/algolab/tree/main/week_9/placing_knights) | [Real Estate Market](https://github.com/vateseif/algolab/tree/main/week_9/real_estate_market)|
+| 10 | [Hand] | [Clues] | [DHL] | [New York] | [Fleetrace] + [New Tiles] |
+| 11 | [Ceryneaian Hind] | [The Fighting Pits of Meereen] | [Asterix in Switzerland] | [Sith] | [Worlcup] |
+| 12 | [Rubeus Hagrid] | [Lord Voldemort] | [On her Majesty's Secret Service] | [Car Sharing] | [Nemean Lion] |
+| 13 | [Strikesback] | [Evolution] | [Marathon] | [Idefix] | [Asterix and the Chariot Race] |
 
 ## Legend
 - *: This was a 'Problem of the Week'
