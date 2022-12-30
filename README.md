@@ -7,7 +7,7 @@
 | --- | --- | --- | --- | --- | --- |
 | 1 | | [Build the Sum]() | [Dominoes]() | [Even Matrices]() | [Even Pairs]() |
 | 2 | [Deck of Cards]() | [Beach Bars]() | [Burning Coins]() | [Search Snippets]() | [The Great Game]() |
-| 3 | [San Francisco]() | [Importan Bridges]() | [Buddy Selection]() | [Ant Challenge]() | [First steps with BGL]() |
+| 3 | [San Francisco](https://github.com/vateseif/algolab/tree/main/week_3/san_francisco) | [Importan Bridges](https://github.com/vateseif/algolab/tree/main/week_3/important_bridges) | [Buddy Selection](https://github.com/vateseif/algolab/tree/main/week_3/buddy_selection) | [Ant Challenge] | [First steps with BGL] |
 | 4 | [Greyjoy](https://github.com/vateseif/algolab/tree/main/week_4/greyjoy) | [Antenna]() | [Hiking Maps](https://github.com/vateseif/algolab/tree/main/week_4/hiking_maps) | [Hit] | [First Hit](https://github.com/vateseif/algolab/tree/main/week_4/first_hit) |
 | 5 | [Tracking]() | [Moving Books](https://github.com/vateseif/algolab/tree/main/week_5/moving_books) | [Severus Snape](https://github.com/vateseif/algolab/tree/main/week_5/severus_snape) | [Boats](https://github.com/vateseif/algolab/tree/main/week_5/boats) | [Asterix The Gaul] |
 | 6 | [Motorcycles](https://github.com/vateseif/algolab/tree/main/week_6/motorcycles) | [What is the maximum?](https://github.com/vateseif/algolab/tree/main/week_6/what_is_the_maximum) | [Diet] | [Inball](https://github.com/vateseif/algolab/tree/main/week_6/inball) | [Suez](https://github.com/vateseif/algolab/tree/main/week_6/suez) |
