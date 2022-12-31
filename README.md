@@ -19,3 +19,4 @@
 | 12 | [Rubeus Hagrid] | [Lord Voldemort] | [On her Majesty's Secret Service] | [Car Sharing] | [Nemean Lion] |
 | 13 | [Strikesback] | [Evolution] | [Marathon] | [Idefix] | [Asterix and the Chariot Race] |
 
+![alt text](/Users/seifboss/eth/algolab/schedule.png)
