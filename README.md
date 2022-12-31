@@ -5,7 +5,7 @@
 ## Featured solutions - ordered by weeks
 | Week | Problem of the Week | 1st problem | 2nd problem | 3rd problem | 4th problem |
 | --- | --- | --- | --- | --- | --- |
-| 1 | | [Build the Sum] | [Dominoes](https://github.com/vateseif/algolab/tree/main/week_1/dominoes) | [Even Matrices](https://github.com/vateseif/algolab/tree/main/week_1/even_matrices) | [Even Pairs](https://github.com/vateseif/algolab/tree/main/week_1/even_pairs) |
+| 1 | | [Build the Sum](https://github.com/vateseif/algolab/tree/main/week_1/build_the_sum) | [Dominoes](https://github.com/vateseif/algolab/tree/main/week_1/dominoes) | [Even Matrices](https://github.com/vateseif/algolab/tree/main/week_1/even_matrices) | [Even Pairs](https://github.com/vateseif/algolab/tree/main/week_1/even_pairs) |
 | 2 | [Deck of Cards] | [Beach Bars](https://github.com/vateseif/algolab/tree/main/week_2/beach_bars) | [Burning Coins] | [Search Snippets] | [The Great Game](https://github.com/vateseif/algolab/tree/main/week_2/the_great_game) |
 | 3 | [San Francisco](https://github.com/vateseif/algolab/tree/main/week_3/san_francisco) | [Importan Bridges](https://github.com/vateseif/algolab/tree/main/week_3/important_bridges) | [Buddy Selection](https://github.com/vateseif/algolab/tree/main/week_3/buddy_selection) | [Ant Challenge] | [First steps with BGL] |
 | 4 | [Greyjoy](https://github.com/vateseif/algolab/tree/main/week_4/greyjoy) | [Antenna]() | [Hiking Maps](https://github.com/vateseif/algolab/tree/main/week_4/hiking_maps) | [Hit] | [First Hit](https://github.com/vateseif/algolab/tree/main/week_4/first_hit) |
