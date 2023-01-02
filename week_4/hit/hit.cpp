@@ -28,7 +28,7 @@ bool testcase(){
       if (CGAL::do_intersect(ray, seg)) intersects = true;
     }
   }
-  std::string out = intersects? "yes" : "no"; 
+  std::string out = intersects? "yes" : "no";
   std::cout << out << std::endl;
   return true;
 }
