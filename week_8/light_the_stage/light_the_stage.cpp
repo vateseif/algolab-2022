@@ -1,6 +1,8 @@
 ///2
 #include <iostream>
 #include <vector>
+#include <map>
+#include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
@@ -9,6 +11,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_2<K> Triangulation;
 typedef K::Point_2 P;
+typedef std::map<P, int> lampIndexMap;
 
 struct Player {
   P position;
@@ -18,7 +21,8 @@ struct Player {
   //Player(P pos, long radius) : position(pos), r(radius) {}
 };
 
-
+// create triangulation of lamp positions
+Triangulation t;
 std::vector<P> lamps;
 std::vector<int> winners;
 std::vector<Player> players;
@@ -43,26 +47,40 @@ void testcase(){
   long lamp_r_squared = h * h;
 
   // load lamps positions
-  lamps.clear(); lamps.resize(n);
+  lamps.clear(); lamps.resize(n); 
+  lampIndexMap lamps_idx; 
   for (int i=0; i<n; i++){
     int x, y;
     std::cin >> x >> y;
-    lamps[i] = P(x, y);
+    P p(x, y);
+    lamps_idx[p] = i;
+    lamps[i] = p;
   }
-  // create triangulation of lamp positions
-  Triangulation t;
+  
+  t.clear();
   t.insert(lamps.begin(), lamps.end());
-
-  int i = 0;
-  for (Player p : players){
-    Triangulation::Vertex_handle nearest_lamp = t.nearest_vertex(p.position);
-    long squared_d = CGAL::squared_distance(nearest_lamp->point(), p.position);
-    if (p.r*p.r + lamp_r_squared + 2*h*p.r <= squared_d) {
-      std::cout << i << " ";
+  
+  bool winnerNotFound = true;
+  while (winnerNotFound){
+    int i = 0;
+    int last_lamp_idx = -1;
+    for (Player p : players){
+      P nearest_lamp = t.nearest_vertex(p.position)->point();
+      long squared_d = CGAL::squared_distance(nearest_lamp, p.position);
+      if (p.r*p.r + lamp_r_squared + 2*h*p.r <= squared_d){
+        std::cout << i << " ";
+        last_lamp_idx = n;
+        winnerNotFound = false;
+      }else{
+        last_lamp_idx = std::max(last_lamp_idx, lamps_idx[nearest_lamp]);
+      }
+      i++;
     }
-    i++;
+    for (Triangulation::Vertex_handle v_handle=t.all_vertices_begin(); v_handle!=t.all_vertices_end(); ++v_handle){
+      P v_point = v_handle->point();
+      if (lamps_idx[v_point] >= last_lamp_idx) t.remove(v_handle);
+    }
   }
-  std::cout << std::endl;
 
   return;
 }
@@ -70,6 +88,6 @@ void testcase(){
 int main(){
   std::ios_base::sync_with_stdio(false);
   int T; std::cin>>T;
-  while(T--) testcase();
+  while(T--) {testcase(); std::cout << std::endl;};
   return 0;
 }
