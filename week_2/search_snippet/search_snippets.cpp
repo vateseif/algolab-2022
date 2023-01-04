@@ -54,7 +54,6 @@ void testcase(){
       }
     }
   }
-
   std::cout << b-a+1 << std::endl;
   
   return;
