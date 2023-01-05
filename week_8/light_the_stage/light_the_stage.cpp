@@ -16,9 +16,7 @@ typedef std::map<P, int> lampIndexMap;
 struct Player {
   P position;
   long r;
-  // This constructor is convenient for a concise initialisation. It can also
-  // be omitted and the member variables be set manually.
-  //Player(P pos, long radius) : position(pos), r(radius) {}
+  int id;
 };
 
 // create triangulation of lamp positions
@@ -40,6 +38,7 @@ void testcase(){
     Player p;
     p.r = r;
     p.position = P(x, y);
+    p.id = i;
     players[i] = p;
   }
   // compute squared radius of lamp area
@@ -56,31 +55,34 @@ void testcase(){
     lamps_idx[p] = i;
     lamps[i] = p;
   }
-  
-  t.clear();
-  t.insert(lamps.begin(), lamps.end());
-  
-  bool winnerNotFound = true;
-  while (winnerNotFound){
-    int i = 0;
-    int last_lamp_idx = -1;
-    for (Player p : players){
+
+  int l=0;
+  int r=n-1;
+
+  while (l<=r){
+    int mid = (l+r)/2;
+    Triangulation t;
+    t.insert(lamps.begin()+l, lamps.begin()+mid+1);
+
+    std::vector<Player> players_left;
+    for(Player p : players){
       P nearest_lamp = t.nearest_vertex(p.position)->point();
-      long squared_d = CGAL::squared_distance(nearest_lamp, p.position);
-      if (p.r*p.r + lamp_r_squared + 2*h*p.r <= squared_d){
-        std::cout << i << " ";
-        last_lamp_idx = n;
-        winnerNotFound = false;
-      }else{
-        last_lamp_idx = std::max(last_lamp_idx, lamps_idx[nearest_lamp]);
+      K::FT dd = CGAL::squared_distance(p.position, nearest_lamp);
+      if (p.r*p.r + lamp_r_squared + 2*h*p.r <= dd){
+        players_left.push_back(p);
       }
-      i++;
     }
-    for (Triangulation::Vertex_handle v_handle=t.all_vertices_begin(); v_handle!=t.all_vertices_end(); ++v_handle){
-      P v_point = v_handle->point();
-      if (lamps_idx[v_point] >= last_lamp_idx) t.remove(v_handle);
+    if (players_left.size()==0){
+      r = mid;
+      if (r==l) break;
+    }else{
+      players = players_left;
+      l = mid + 1;
     }
   }
+  
+  for (Player p : players) 
+    std::cout << p.id << " ";
 
   return;
 }
