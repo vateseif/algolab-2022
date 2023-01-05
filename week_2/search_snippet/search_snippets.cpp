@@ -2,9 +2,6 @@
 #include <iostream>
 #include <vector>
 #include <limits>
-#include <cmath>
-#include <unordered_set>
-#include <unordered_map>
 #include <algorithm>
 
 #define trace(x) std::cerr << #x << " = " << x << std::endl;
