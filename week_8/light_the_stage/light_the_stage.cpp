@@ -1,7 +1,6 @@
 ///2
 #include <iostream>
 #include <vector>
-#include <map>
 #include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -11,7 +10,6 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_2<K> Triangulation;
 typedef K::Point_2 P;
-typedef std::map<P, int> lampIndexMap;
 
 struct Player {
   P position;
@@ -47,12 +45,10 @@ void testcase(){
 
   // load lamps positions
   lamps.clear(); lamps.resize(n); 
-  lampIndexMap lamps_idx; 
   for (int i=0; i<n; i++){
     int x, y;
     std::cin >> x >> y;
     P p(x, y);
-    lamps_idx[p] = i;
     lamps[i] = p;
   }
 
