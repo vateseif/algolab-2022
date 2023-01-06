@@ -70,3 +70,11 @@ $(n-1)\cdot l \cdot 2^7$ can be interpreted as the max residual cost when no mis
 MinCost(Graph) can be interpreted as: $(n-1) \cdot l \cdot 2^7 - \sum_j \text {cost}_j \cdot x_j$
 
 Where $x_j = 0\ \text{or}\ 1$ indicates whether mission $j$ is selected.
+
+## Time complexity
+
+Using `successive_shortest_path_nonnegative_weights` the complexity is:
+
+$$
+O(|f| · (e + n log n))
+$$
