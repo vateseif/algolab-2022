@@ -69,11 +69,10 @@ void testcase(){
       }
     }
     if (players_left.size()==0){
-      r = mid;
-      if (r==l) break;
+      r = mid-1;
     }else{
-      players = players_left;
       l = mid + 1;
+      players = players_left;
     }
   }
   
