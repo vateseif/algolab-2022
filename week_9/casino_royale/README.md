@@ -67,6 +67,6 @@ Thus we can compute the solution of the problem as:
 
 $(n-1)\cdot l \cdot 2^7$ can be interpreted as the max residual cost when no mission is taken.
 
-MinCost(Graph) can be interpreted as: $(n-1) \cdot l \cdot 2^7 - \sum_j^m \text {cost}_j \cdot x_j$
+MinCost(Graph) can be interpreted as: $(n-1) \cdot l \cdot 2^7 - \sum^m_j \text {cost}_j \cdot x_j$
 
 Where $x_j = 0\ \text{or}\ 1$ indicates whether mission $j$ is selected.
