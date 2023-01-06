@@ -22,6 +22,7 @@ This can be done efficiently by updating $a, b$ as follows:
 - while $n_{missing} = 0$:
     - increase a by 1
     - decrease `word_count` of word at previous a
+    - if `word_count` becomes 0 increse $n_{missing}$
 
 ## Complexity
 
