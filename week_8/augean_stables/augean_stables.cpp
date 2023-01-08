@@ -30,8 +30,8 @@ int n;
 std::vector<Stable> stables;
 std::vector<long> A, P;
  
-//for each a1...a24 store the biggest j s.t. ai,pj didn't solve the prob
-std::vector<int> memo; 
+//for each a1...a24 store the biggest j s.t. ai,pj did solve the prob
+std::vector<int> memo1, memo2; 
 
 
 bool solve(long a, long p){
@@ -81,7 +81,8 @@ std::string testcase(){
 
   int l=1;
   int r=49;
-  memo.clear(); memo.resize(25, -1);
+  memo1.clear(); memo1.resize(25, -1);
+  memo2.clear(); memo2.resize(25, -1);
   while (l<r){
     int mid = (l+r)/2;
     bool foundSolution = false;
@@ -89,14 +90,16 @@ std::string testcase(){
     int s = std::max(0, mid-24);
     int e = std::min(24, mid);
     for(int i=s; i<=e; i++){
+      int j = s-i+e;
       long a = A[i];
-      long p = P[s-i+e];
-      if (s-i+e>memo[i]){
+      long p = P[j];
+      if (j>memo1[i] && i>memo2[j]){
         if (solve(a, p)){
           foundSolution = true;
           break;
         }
-        memo[i] = s-i+e;
+        memo1[i] = std::max(memo1[i], j);
+        memo2[j] = std::max(memo2[j], i);
       }
     }
     if (foundSolution){
