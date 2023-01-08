@@ -9,8 +9,7 @@ std::vector<bool> opened;
 std::vector<std::pair<int, int>> bombs;
 
 int turns2open(int idx){
-  if (idx>=n) return 0;
-  if (opened[idx]) return 0;
+  if (idx>=n || opened[idx]) return 0;
   opened[idx] = true;
   return 1+turns2open(2*idx+1)+turns2open(2*idx+2);
 }
