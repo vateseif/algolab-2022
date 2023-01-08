@@ -6,13 +6,13 @@
 #include <algorithm>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Gmpz.h>
 
 #define trace(x) std::cerr << #x << " = " << x << std::endl;
 
 typedef std::vector<int> VB;
-typedef CGAL::Gmpq IT;
-typedef CGAL::Gmpq ET;
+typedef long IT;
+typedef CGAL::Gmpz ET;
 typedef CGAL::Quadratic_program<IT> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
@@ -101,6 +101,7 @@ std::string testcase(){
   }
 
   return l==49? "Impossible!" : std::to_string(l);
+  
 }
 
 int main(){
