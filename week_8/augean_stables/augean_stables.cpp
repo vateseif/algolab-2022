@@ -29,6 +29,9 @@ Stable(long ff, long cc, long kk, long ll, long mm) {
 int n;
 std::vector<Stable> stables;
 std::vector<long> A, P;
+ 
+//for each a1...a24 store the biggest j s.t. ai,pj did solve the prob
+std::vector<int> memo; 
 
 
 bool solve(long a, long p){
@@ -78,6 +81,7 @@ std::string testcase(){
 
   int l=1;
   int r=49;
+  memo.clear(); memo.resize(25, -1);
   while (l<r){
     int mid = (l+r)/2;
     bool foundSolution = false;
@@ -87,12 +91,14 @@ std::string testcase(){
     for(int i=s; i<=e; i++){
       long a = A[i];
       long p = P[s-i+e];
-      if (solve(a, p)){
-        foundSolution = true;
-        break;
+      if (s-i+e>memo[i]){
+        if (solve(a, p)){
+          foundSolution = true;
+          break;
+        }
+        memo[i] = s-i+e;
       }
     }
-    
     if (foundSolution){
       r = mid;
     }else{
