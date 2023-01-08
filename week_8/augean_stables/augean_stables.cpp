@@ -30,7 +30,7 @@ int n;
 std::vector<Stable> stables;
 std::vector<long> A, P;
  
-//for each a1...a24 store the biggest j s.t. ai,pj did solve the prob
+//for each a1...a24 store the biggest j s.t. ai,pj didn't solve the prob
 std::vector<int> memo; 
 
 
