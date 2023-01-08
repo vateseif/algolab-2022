@@ -101,7 +101,6 @@ std::string testcase(){
   }
 
   return l==49? "Impossible!" : std::to_string(l);
-  
 }
 
 int main(){
