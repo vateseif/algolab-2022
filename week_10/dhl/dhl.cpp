@@ -15,17 +15,20 @@ int dp(int na, int nb){
   if (na==0 && nb==0) return 0;
   if (memo[na][nb]<MAX_VAL) return memo[na][nb];
   
+  int diff_a = - SA[na] + A[na];
+  int diff_b = - SB[nb] + B[nb];
+  
+  int sa = A[na];
   if (na==1){
-    int sa = A[na];
-    int sb = SB[1] - SB[nb] + B[nb];
+    int sb = SB[1] + diff_b;
     int c = sa*sb;
     memo[na][nb] = c;
     return c;
   }
   
+  int sb = B[nb];
   if (nb==1){
-    int sa = SA[1] - SA[na] + A[na];
-    int sb = B[nb];
+    sa = SA[1] + diff_a;
     int c = sa*sb;
     memo[na][nb] = c;
     return c;
@@ -33,16 +36,16 @@ int dp(int na, int nb){
   
   int min_cost = MAX_VAL;
   
+  sa = A[na];
   for(int kb=nb-1; kb>=1; kb--){
-    int sa = A[na];
-    int sb = SB[nb-kb+1] - SB[nb] + B[nb];
+    sb = SB[nb-kb+1] + diff_b;
     int c = sa*sb + dp(na-1, nb-kb);
     min_cost = std::min(min_cost, c);
   }
   
+  sb = B[nb];
   for (int ka=na-1; ka>=1; ka--){
-    int sa = SA[na-ka+1] - SA[na] + A[na];
-    int sb = B[nb];
+    sa = SA[na-ka+1] + diff_a;
     int c = sa*sb + dp(na-ka, nb-1);
     min_cost = std::min(min_cost, c); 
   }
