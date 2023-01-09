@@ -59,7 +59,6 @@ void testcase(){
   int n;
   std::cin >> n;
   
-  
   A.clear(); A.resize(n+1);
   SA.clear(); SA.resize(n+1);
   for(int i=1; i<n+1; i++){
