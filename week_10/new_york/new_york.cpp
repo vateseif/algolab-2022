@@ -1,63 +1,51 @@
-///1
+///2
 #include <iostream>
 #include <vector>
-#include <queue>
 #include <algorithm>
+#include <deque>
+#include <map>
+#include <set>
 
-int n, m, k;
-std::vector<int> temp; // route and temp for each island
-std::vector<std::vector> routes;
+#define trace(x) std::cerr << #x << " = " << x << std::endl;
 
+int n, k;
+size_t m;
 
-void solve2(){
-  int src = 0;
-  // BFS to find vertex set S
-  std::vector<int> vis(n, false); // visited flags
-  std::stack<int> Q; // BFS queue (from std:: not boost::)
-  vis[src] = true; // Mark the source as visited
-  Q.push(src);
-  while (!Q.empty()) {
-    const int u = Q.top();
-    Q.pop();
-    for (int v : routes[u]){
-      if (vis[v]) continue;
-      vis[v] = true;
-      Q.push(v);
-    }
+std::vector<int> temp, critical; // route and temp for each island
+std::vector<std::vector<int>> routes;
+std::map<int, bool> critical_map;
+
+void update_window(std::deque<int>& window, std::map<int, int>& window_temp){
+  // check if front node is a critical node
+  int min_h = window_temp.begin()->first;
+  int max_h = window_temp.rbegin()->first;
+  if (!critical_map[window.front()] && max_h - min_h <= k) {
+    critical.push_back(window.front());
+    critical_map[window.front()] = true; 
+  }
+  //if (max_h - min_h <= k) critical_set.insert(window.front());
+  // remove counter of temperature of front node is the count becomes 0
+  if (!(--window_temp[temp[window.front()]]))
+    window_temp.erase(window_temp.find(temp[window.front()]));
+  // remove front node
+  window.pop_front();
+}
+
+void sliding_window(std::deque<int> window, std::map<int, int> window_temp,int v){
+  // add new node to window
+  window.push_back(v);
+  window_temp[temp[v]]++;
+  // check for critical window and remove oldest
+  if (window.size()==m){
+    update_window(window, window_temp);
+  }
+  // add new node
+  for (int next_v : routes[v]){
+    sliding_window(window, window_temp, next_v);
+    //if (critical_map[v]) break;
   }
 }
 
-void solve(){
-  std::vector<int> critical;
-  for (int i=0; i<n; i++){
-    int counter = 1;
-    int v = routes[i];
-    int min_h = temp[i];
-    int max_h = temp[i];
-    while (v!=-1){
-      counter++;
-      min_h = std::min(min_h, temp[v]);
-      max_h = std::max(max_h, temp[v]);
-      if (counter == m){
-        if (max_h - min_h <= k){
-          critical.push_back(i);
-        }
-        break;
-      }
-      v = routes[v];
-    }
-  }
-  for (int i=0; i<n; i++) 
-
-
-  if (critical.size()>0){
-    for (int s : critical) std::cout  << s << " ";
-  } else{
-    std::cout  << "Abort mission";
-  }
-  std::cout  << std::endl;
-
-}
 
 void testcase(){
   std::cin >> n >> m >> k;
@@ -75,8 +63,21 @@ void testcase(){
     std::cin >> u >> v;
     routes[u].push_back(v);
   }
+  
+  critical.clear();
+  critical_map.clear();
+  std::deque<int> window;
+  std::map<int, int> window_temp;
+  sliding_window(window, window_temp, 0);
 
-  solve();
+  
+  if (critical.size()>0){
+    std::sort(critical.begin(), critical.end());
+    for (int s : critical) std::cout  << s << " ";
+  } else{
+    std::cout  << "Abort mission";
+  }
+  std::cout  << std::endl;
 
   return;
 }
