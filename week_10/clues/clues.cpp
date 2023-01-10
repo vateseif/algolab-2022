@@ -1,4 +1,4 @@
-///1
+///2
 #include <iostream>
 #include <vector>
 #include <stack>
@@ -70,7 +70,21 @@ bool interference(Triangulation& t, long& r){
     if (u_src->info().second) t1.insert(u_src->point());
     else t2.insert(u_src->point());
   }
+
   return (trg_interference(t1, r) || trg_interference(t2, r));
+}
+
+char radios_can_communicate(Triangulation& t, P& ai, P& bi, long& r){
+  VH nearest_ai = t.nearest_vertex(ai);
+  VH nearest_bi = t.nearest_vertex(bi);
+  if (CGAL::squared_distance(ai, nearest_ai->point()) > r*r)
+    return 'n';
+  if (CGAL::squared_distance(bi, nearest_bi->point()) > r*r)
+    return 'n';
+  if (nearest_ai->info().first != nearest_bi->info().first)
+    return 'n';
+
+  return 'y';
 }
 
 
@@ -88,14 +102,25 @@ void testcase(){
 
   Triangulation t;
   t.insert(stations.begin(), stations.end());
+  
+  bool succes = !interference(t, r);
 
   for(int i=0; i<m; i++){
     int x1, y1, x2, y2;
     std::cin >> x1 >> y1 >> x2 >> y2;
+    if (!succes) {
+      std::cout << 'n';
+      continue;
+    }
+    P ai(x1, y1), bi(x2, y2);
+    if (CGAL::squared_distance(ai, bi) <= r*r){
+      std::cout << 'y';
+    }else{
+      std::cout << radios_can_communicate(t, ai, bi, r);
+    }
   }
 
-  char out = interference(t, r)? 'n' : 'y';
-  std::cout << out << std::endl;
+  std::cout << std::endl;
 
   return;
 }
