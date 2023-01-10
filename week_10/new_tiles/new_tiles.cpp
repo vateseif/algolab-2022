@@ -1,3 +1,4 @@
+///1
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -5,6 +6,8 @@
 // BGL includes
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/max_cardinality_matching.hpp>
+
+#define trace(x) std::cerr << #x << " = " << x << std::endl;
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> graph;
 typedef boost::graph_traits<graph>::vertex_descriptor                       vertex_desc;
@@ -33,21 +36,22 @@ bool valid_node(int i, int j){
 }
 
 bool valid_connection(int i1, int j1, int i2, int j2){
-  int min_i = std::min(i1, i2);
-  int max_j = std::max(j1, j2);
-  if (!grid[min_i][max_j] || !grid[min_i+1][max_j-1]) return false;
+  int top = i1<i2? -1:1;
+  int left = j1<j2? -1:1;
+  if (!grid[i1-top][j1] || !grid[i1][j1-left]) return false;
   return true;
 }
 
 void testcase(){
   
-  std::cin >> h, w;
+  std::cin >> h >> w;
 
   grid.clear();
   grid.resize(h, std::vector<int>(w));
   for(int i=0; i<h; i++){
     for (int j=0; j<w; j++){
-      std::cin >> grid[i][j];
+      int x; std::cin >> x;
+      grid[i][j] = x;
     }
   }
 
@@ -76,6 +80,7 @@ void testcase(){
     boost::make_iterator_property_map(mate_map.begin(), boost::get(boost::vertex_index, G)));
 
   std::cout << matching_size << std::endl;
+  
 
   return;
 }
@@ -83,6 +88,7 @@ void testcase(){
 
 int main(){
   std::ios_base::sync_with_stdio(false);
+  init_moves();
   int T; std::cin >> T;
   while (T--) testcase();  
   return 0;
