@@ -70,7 +70,6 @@ bool interference(Triangulation& t, long& r){
     if (u_src->info().second) t1.insert(u_src->point());
     else t2.insert(u_src->point());
   }
-
   return (trg_interference(t1, r) || trg_interference(t2, r));
 }
 
