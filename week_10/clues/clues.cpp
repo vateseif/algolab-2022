@@ -39,7 +39,6 @@ bool interference(Triangulation& t, long& r){
     u->info() = std::make_pair(0, false);
   }
 
-
   // init triangulation for the 2 different coloring
   Triangulation t1, t2;
   // loop through connected components via dfs
@@ -59,14 +58,13 @@ bool interference(Triangulation& t, long& r){
           VH v =  c->first->vertex((c->second + 1) % 3);
           long dd = CGAL::squared_distance(u->point(), v->point());
           if (dd <=r*r){
-            if (v->info() == u->info()) return false;
             if (v->info().first==0){
               v->info() = std::make_pair(u->info().first, !u->info().second);
               Q.push(v);
             }
           }
         }
-        } while (++c != t.incident_edges(u));    
+        } while (++c != t.incident_edges(u));
       }
     }
     if (u_src->info().second) t1.insert(u_src->point());
