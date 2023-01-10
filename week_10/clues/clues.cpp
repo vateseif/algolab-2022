@@ -1,78 +1,112 @@
 ///1
 #include <iostream>
 #include <vector>
-#include <string>
+#include <stack>
 #include <map>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
+
+#define trace(x) std::cerr << #x << " = " << x << std::endl;
+
+
+typedef std::pair<int, bool> nodeInfo; // component and color
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Delaunay_triangulation_2<K>  Triangulation;
-typedef Triangulation::Edge_iterator  Edge_iterator;
+typedef CGAL::Triangulation_face_base_2<K> Fb;
+typedef CGAL::Triangulation_vertex_base_with_info_2<nodeInfo, K> Vb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
+typedef CGAL::Delaunay_triangulation_2<K,Tds> Triangulation;
+
 typedef K::Point_2 P;
-typedef Triangulation::Vertex_handle VertexHandle;
-typedef std::map<VertexHandle, int> OpenedVertexMap;
+typedef Triangulation::Vertex_handle VH;
 
-Triangulation t;
+
+int n, m;
 std::vector<P> stations;
-OpenedVertexMap vertex_map;
 
-bool check_interference(int r){
-  for (VertexHandle v_handle = t.all_vertices_begin(); v_handle!=t.all_vertices_end(); v_handle++){
-    Triangulation::Edge_circulator c = t.incident_edges(v_handle);
-    do {
-    if (!t.is_infinite(c)) continue;
-    VertexHandle neighbor = c->first->vertex((c->second + 2) % 3);
-    int color_vertex = vertex_map[v_handle];
-    int color_neighbor = vertex_map[neighbor];
-    } while (++c != t.incident_edges(v_handle));
-    
-  }
-
-  for (Triangulation::Face_iterator f=t.finite_faces_begin(); f!=t.finite_faces_end(); f++){
-    for (int i=0; i<3; i++){
-      int vi = t.cw(i);
-      int vj = t.ccw(i);
-      int i_vi = CGAL::squared_distance(f->vertex(i)->point(), f->vertex(vi)->point());
-      int i_vj = CGAL::squared_distance(f->vertex(i)->point(), f->vertex(vj)->point());
-      if (i_vi <= r && i_vj <= r) return true;
-    }
+bool trg_interference(Triangulation& t, long& r){
+  for (auto e=t.finite_edges_begin(); e!=t.finite_edges_end(); e++){
+    if (t.segment(e).squared_length() <= r*r) return true;
   }
   return false;
 }
 
+bool interference(Triangulation& t, long& r){
+
+  // set default nodeInfo for each node
+  for (auto u = t.finite_vertices_begin(); u!=t.finite_vertices_end(); u++){
+    u->info() = std::make_pair(0, false);
+  }
+
+
+  // init triangulation for the 2 different coloring
+  Triangulation t1, t2;
+  // loop through connected components via dfs
+  // a connection occurs if distance is smaller than r
+  int n_components = 0;
+  for (auto u_src = t.finite_vertices_begin(); u_src!=t.finite_vertices_end(); u_src++){
+    if (u_src->info().first==0){  
+      u_src->info().first = ++n_components;
+      std::stack<VH> Q;
+      Q.push(u_src);
+      while (!Q.empty()){
+        VH u = Q.top(); Q.pop();
+        // find all infinite edges incident to v
+        Triangulation::Edge_circulator c = t.incident_edges(u);
+        do {
+        if (!t.is_infinite(c)) {
+          VH v =  c->first->vertex((c->second + 1) % 3);
+          long dd = CGAL::squared_distance(u->point(), v->point());
+          if (dd <=r*r){
+            if (v->info() == u->info()) return false;
+            if (v->info().first==0){
+              v->info() = std::make_pair(u->info().first, !u->info().second);
+              Q.push(v);
+            }
+          }
+        }
+        } while (++c != t.incident_edges(u));    
+      }
+    }
+    if (u_src->info().second) t1.insert(u_src->point());
+    else t2.insert(u_src->point());
+  }
+
+  return (trg_interference(t1, r) || trg_interference(t2, r));
+}
+
+
 void testcase(){
-  int n, m, r;
+  long r;
   std::cin >> n >> m >> r;
 
-  t.clear();
-  vertex_map.clear();
+  stations.clear();
+  stations.resize(n);
   for (int i=0; i<n; i++){
     int x, y;
     std::cin >> x >> y;
-    P p(x, y);
-    t.insert(p);
+    stations[i] = P(x, y);
   }
-  
+
+  Triangulation t;
   t.insert(stations.begin(), stations.end());
 
-  for (int i=0; i<m; i++){
-    int xa, ya, xb, yb;
-    std::cin >> xa >> ya >> xb >> yb;
-
-    //std::string out = check_interference(r)? "n" : "y"; 
-    //std::cout << out;
+  for(int i=0; i<m; i++){
+    int x1, y1, x2, y2;
+    std::cin >> x1 >> y1 >> x2 >> y2;
   }
 
-  std::cout << std::endl;
+  char out = interference(t, r)? 'n' : 'y';
+  std::cout << out << std::endl;
 
   return;
 }
 
+
 int main(){
   std::ios_base::sync_with_stdio(false);
-  int T; 
-  std::cin >> T;
-  while (T--) testcase();
+  int T; std::cin >> T;
+  while(T--)testcase();
   return 0;
 }
