@@ -1,91 +1,85 @@
-///1
+///2
 #include <iostream>
 #include <vector>
-#include <map>
-#include <algorithm>
 #include <string>
-#include <stack>
+#include <cmath>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/push_relabel_max_flow.hpp>
 
-typedef std::vector<int> VI;
-typedef std::vector<bool> VB;
+#define trace(x) std::cerr << #x << " = " << x << std::endl;
+
+// Graph Type with nested interior edge properties for flow algorithms
+typedef boost::adjacency_list_traits<boost::vecS, boost::vecS, boost::directedS> traits;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS, boost::no_property,
+    boost::property<boost::edge_capacity_t, long,
+        boost::property<boost::edge_residual_capacity_t, long,
+            boost::property<boost::edge_reverse_t, traits::edge_descriptor>>>> graph;
+
+typedef traits::vertex_descriptor vertex_desc;
+typedef traits::edge_descriptor edge_desc;
+
+// Custom edge adder class, highly recommended
+class edge_adder {
+  graph &G;
+
+ public:
+  explicit edge_adder(graph &G) : G(G) {}
+
+  void add_edge(int from, int to, long capacity) {
+    auto c_map = boost::get(boost::edge_capacity, G);
+    auto r_map = boost::get(boost::edge_reverse, G);
+    const auto e = boost::add_edge(from, to, G).first;
+    const auto rev_e = boost::add_edge(to, from, G).first;
+    c_map[e] = capacity;
+    c_map[rev_e] = 0; // reverse edge has no capacity!
+    r_map[e] = rev_e;
+    r_map[rev_e] = e;
+  }
+};
 
 int n, m;
-int MIN_VAL = std::numeric_limits<int>::min();
 
-VI S;
-std::vector<VI> edges;
-std::vector<std::pair<int, VB>> reachable; 
-
-
-void compute_reachable(int u){
-
-  std::stack<int> Q;
-  std::vector<bool> vis(n, false);
-  Q.push(u);
-  vis[u] = true;
-  int sum = 0;
-  while (!Q.empty()){
-    int v = Q.top(); Q.pop();
-    sum += S[v];
-    for (int next_v : edges[v]){
-      if (vis[next_v]) continue;
-      Q.push(next_v);
-      vis[next_v] = true;
-    }
-  }
-
-  reachable[u] = std::make_pair(sum, vis);
-}
-
-
+int MAX_VAL = 500*std::pow(2, 10);
 
 void testcase(){
-  
+  //
   std::cin >> n >> m;
 
-  S.clear();
-  S.resize(n);
-  for(int i=0; i<n; i++){
-    std::cin>>S[i];
-  }
+  // init graph
+  graph G(n);
+  edge_adder adder(G);
+  // Add special vertices source and sink
+  const vertex_desc v_source = boost::add_vertex(G);
+  const vertex_desc v_sink = boost::add_vertex(G);
 
-  edges.clear();
-  edges.resize(n);
-  for(int i=0; i<m; i++){
-    int u, v;
-    edges[u].push_back(v);
-  }
-
-  reachable.clear();
-  reachable.resize(n);
+  // connect source to node with positive s
+  // connect target to node with negative s
+  int sum_pos_weights = 0;
   for (int i=0; i<n; i++){
-    compute_reachable(i);
-  }
-
-  int max_s = MIN_VAL;
-  for (int i=0; i<n-1; i++){
-    for (int j=i+1; j<n; j++){
-      if (reachable[i].second[j]) continue;
-      int s = 0;
-      for (int k=0; k<n; k++){
-        if (reachable[i].second[k] || reachable[j].second[k]){
-          s += S[k];
-        }
-      }
-      max_s = std::max(max_s, s);
+    int s; std::cin >> s;
+    if (s >= 0){
+      sum_pos_weights += s;
+      adder.add_edge(v_source, i, s);
+    }else{
+      adder.add_edge(i, v_sink, -s);
     }
   }
 
-  std::string out = max_s>0? std::to_string(max_s) : "impossible";
-
-  std::cout << out << std::endl;
-
+  // if connection from u to v add edge with flow MAX_VAL
+  // no cut will be made separating them
+  for (int i=0; i<m; i++){
+    int u, v;
+    std::cin >> u >> v;
+    adder.add_edge(u, v, MAX_VAL);
+  }
+  
+  long max_C = sum_pos_weights - boost::push_relabel_max_flow(G, v_source, v_sink);
+  std::string out = max_C>0? std::to_string(max_C) : "impossible";
+  
+  std::cout << out << "\n";
   
   return;
 }
-
-
-
 
 int main(){
   std::ios_base::sync_with_stdio(false);
