@@ -63,7 +63,6 @@ void testcase(){
   
   weighted_graph G(n+s); // poisitions plus the inside of a shelter
   weight_map weights = boost::get(boost::edge_weight, G);
-
   
   for (int i=0; i<m; i++){
     char w;
