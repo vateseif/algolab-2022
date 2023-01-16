@@ -55,23 +55,15 @@ struct Street{
   }
 };
 
-int MAX_VAL = std::numeric_limits<int>::max();
 std::vector<Street> streets;
-std::vector<std::vector<int>> capacities, costs;
-std::vector<std::vector<bool>> added_edge;
 
 
-std::vector<vertex_desc> compute_path(int start, int finish, std::vector<vertex_desc>& pred_map){
-  int cur = finish;
-  std::vector<vertex_desc> path;
-  path.push_back(cur);
-  while (start != cur) {
-    cur = pred_map[cur];
-    path.push_back(cur);
-  }
-  //std::reverse(path.begin(), path.end());
-  return path;
+void compute_dist_map(weighted_graph& G, std::vector<int>& dist_map, int start){
+  boost::dijkstra_shortest_paths(G, start,
+    boost::distance_map(boost::make_iterator_property_map(
+      dist_map.begin(), boost::get(boost::vertex_index, G))));
 }
+
 
 void testcase(){
   int n, m, s, f;
@@ -83,8 +75,6 @@ void testcase(){
   weight_map weights = boost::get(boost::edge_weight, G_dijkstra);
 
   streets.clear(); streets.resize(m);
-  costs.clear(); costs.resize(n, std::vector<int>(n, MAX_VAL));
-  capacities.clear(); capacities.resize(n, std::vector<int>(n, 0));
   for (int i=0; i<m; i++){
     int a, b, c, d;
     std::cin >> a >> b >> c >> d;
@@ -92,63 +82,30 @@ void testcase(){
     e = boost::add_edge(a, b, G_dijkstra).first; weights[e]=d;
     e = boost::add_edge(b, a, G_dijkstra).first; weights[e]=d;
     streets[i] = Street(a, b, c, d);
-    if (b < a) std::swap(b, a);
-    if (d < costs[a][b]){
-      costs[a][b] = d;
-      capacities[a][b] = c;
-    }else if (d == costs[a][b]){
-      capacities[a][b] += c;
-    }
   }
 
   // shortest path from f to all nodes
   std::vector<int>         f_dist_map(n);
-  std::vector<vertex_desc> f_pred_map(n);
-
-  boost::dijkstra_shortest_paths(G_dijkstra, f,
-    boost::distance_map(boost::make_iterator_property_map(
-      f_dist_map.begin(), boost::get(boost::vertex_index, G_dijkstra)))
-    .predecessor_map(boost::make_iterator_property_map(
-      f_pred_map.begin(), boost::get(boost::vertex_index, G_dijkstra))));
+  compute_dist_map(G_dijkstra, f_dist_map, f);
 
   // shortest path from s to all nodes
   std::vector<int>         s_dist_map(n);
-  std::vector<vertex_desc> s_pred_map(n);
+  compute_dist_map(G_dijkstra, s_dist_map, s);
+  
 
-  boost::dijkstra_shortest_paths(G_dijkstra, s,
-    boost::distance_map(boost::make_iterator_property_map(
-      s_dist_map.begin(), boost::get(boost::vertex_index, G_dijkstra)))
-    .predecessor_map(boost::make_iterator_property_map(
-      s_pred_map.begin(), boost::get(boost::vertex_index, G_dijkstra))));
-
-  int min_cost = s_dist_map[f]; // == s_dist_map[f];
+  int min_cost = s_dist_map[f];
 
   // init graph for max flow
   graph G_flow(n);
   edge_adder adder(G_flow);
 
-  added_edge.clear();
-  added_edge.resize(n, std::vector<bool>(n, false));
 
-  // compute cost of path from all neighbors of s to f
-  int count = 0;
-  for (int i=0; i<n; i++){
-    if (i!=f && f_dist_map[i] + s_dist_map[i] == min_cost){
-      std::vector<vertex_desc> fpath = compute_path(f, i, f_pred_map);
-      std::vector<vertex_desc> spath = compute_path(s, i, s_pred_map);
-      std::reverse(spath.begin(), spath.end());
-      for (int u=1; u<fpath.size(); u++){
-        spath.push_back(fpath[u]);
-      }
-      for (int u=0; u<spath.size()-1; u++){
-        if (!added_edge[spath[u]][spath[u+1]]){
-          int u1 = spath[u];
-          int v1 = spath[u+1];
-          if (v1 < u1) std::swap(v1, u1);
-          adder.add_edge(spath[u], spath[u+1], capacities[u1][v1]);
-          added_edge[spath[u]][spath[u+1]] = true;
-        }
-      }
+  // loop through all egdes to see if on a shortest path
+  for (Street st : streets){
+    if (s_dist_map[st.a] + f_dist_map[st.b] + st.d == min_cost){
+      adder.add_edge(st.a, st.b, st.c);
+    } else if (s_dist_map[st.b] + f_dist_map[st.a] + st.d == min_cost){
+      adder.add_edge(st.b, st.a, st.c);
     }
   }
 
@@ -163,7 +120,6 @@ void testcase(){
 int main(){
   std::ios_base::sync_with_stdio(false);
   int T; std::cin >> T;
-  //T=5;
   while(T--) testcase();
   return 0;
 }
