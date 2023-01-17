@@ -34,8 +34,8 @@ std::vector<IPoint> trees;
 
 void testcase(){
   int n, h;
-  long ss;
-  std::cin >> n >> ss >> h;
+  long s;
+  std::cin >> n >> s >> h;
 
 
   trees.clear(); trees.reserve(n);
@@ -67,17 +67,12 @@ void testcase(){
   //a2 query
   int a2 = 0;
   long min_edge = std::numeric_limits<long>::max();
-  boost::disjoint_sets_with_storage<> uf(n);
   for (EdgeV::const_iterator e = edges.begin(); e != edges.end(); ++e) {
     // determine components of endpoints
-    Index c1 = uf.find_set(std::get<0>(*e));
-    Index c2 = uf.find_set(std::get<1>(*e));
-    if (c1 != c2) {
-      // this edge connects two different components => part of the emst
-      if (std::get<2>(*e) > min_edge) break;
-      min_edge = std::get<2>(*e);
-      a2++;
-    }
+    // this edge connects two different components => part of the emst
+    if (std::get<2>(*e) > min_edge) break;
+    min_edge = std::get<2>(*e);
+    a2++;
   }
   
   
@@ -97,21 +92,11 @@ void testcase(){
     }else if(rr == min_rr){
       a3++;
     }
-  }
-  
-  
-  // as query
-  int as = 0;
-  auto start_idx = std::lower_bound(edges.begin(), edges.end(), s, [](Edge a, int val) {
-        return std::get<2>(a) > val;});
-  for (auto it=start_idx; it!=egdes.end()){
-    if (std::get<2>(*e) > s) break;
-    as++;
-  }
+  } 
 
   std::cout << a2  << " ";
   std::cout << a3  << " ";
-  std::cout << as  << " ";
+  std::cout << h  << " ";
   std::cout << h  << std::endl;
 
 
