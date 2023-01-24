@@ -1,109 +1,76 @@
+///2
 #include<iostream>
 #include<vector>
 #include<algorithm>
 
-// TODO: solution gets 100%. can be faster making memo the same for black and red
+#define trace(x) std::cerr << #x << " = " << x << std::endl;
 
-typedef std::vector<std::vector<int>> AL; // adjacency list
+int n;
+std::vector<std::vector<int>> edges, memo; // memo[0][u] shortest path u->n-1, memo[1][u] longest_path u->n-1
 
+// forward init
+int dp_max(int u);
+int dp_min(int u);
 
-int compute_bpath(AL &graph, std::vector<std::vector<int>> &memo, int node, int cost){
-  int agent = cost % 2; // 1 = sherlock (max black), 0 = moriarty (min black)
-  if (memo[agent][node] > -1) return memo[agent][node];
-  
-  // init cost of next nodes
-  std::vector<int> next_nodes_cost;
-  for (int next_node : graph[node]){
-    next_nodes_cost.push_back(compute_bpath(graph, memo, next_node, cost+1));
+int dp_min(int u){
+  if (u==n) return 0;
+  if (memo[0][u] != -1) return memo[0][u];
+  int min_d = std::numeric_limits<int>::max();
+  for (int v : edges[u]){
+    min_d = std::min(min_d, 1+dp_max(v));
   }
-  int node_cost;
-  if (agent == 0){
-    node_cost = *std::min_element(next_nodes_cost.begin(), next_nodes_cost.end()) + 1;
-  }else{
-    node_cost = *std::max_element(next_nodes_cost.begin(), next_nodes_cost.end()) + 1;
+  memo[0][u] = min_d;
+  return min_d;
+}
+
+int dp_max(int u){
+  if (u==n) return 0;
+  if (memo[1][u] != -1) return memo[1][u];
+  int max_d = std::numeric_limits<int>::min();
+  for (int v : edges[u]){
+    max_d = std::max(max_d, 1+dp_min(v));
   }
-  memo[agent][node] = node_cost;
-  return node_cost;
+  memo[1][u] = max_d;
+  return max_d;
 }
 
 
-int compute_rpath(AL &graph, std::vector<std::vector<int>> &memo, int node, int cost){
-  int agent = cost % 2; // 0 = sherlock (min red), 1 = moriarty (max red)
-  if (memo[agent][node] > -1) return memo[agent][node];
+
+void testcase(){
+  int m, r, b;
+  std::cin >> n >> m >> r >> b;
+
   
-  // init cost of next nodes
-  std::vector<int> next_nodes_cost;
-  for (int next_node : graph[node]){
-    next_nodes_cost.push_back(compute_rpath(graph, memo, next_node, cost+1));
+  // store edges
+  edges.clear();
+  edges.resize(n+1);
+  for (int i=0; i<m; i++){
+    int u, v;
+    std::cin >> u >> v;
+    edges[u].push_back(v);
   }
-  int node_cost;
-  if (agent == 0){
-    node_cost = *std::min_element(next_nodes_cost.begin(), next_nodes_cost.end()) + 1;
-  }else{
-    node_cost = *std::max_element(next_nodes_cost.begin(), next_nodes_cost.end()) + 1;
-  }
-  memo[agent][node] = node_cost;
-  return node_cost;
+
+  
+  memo.clear();
+  memo.resize(2, std::vector<int>(n+1, -1));
+  // shortest min-max path from red
+  int cost_r = dp_min(r);
+
+  // shortest min_max path from black
+  int cost_b = dp_min(b);
+
+  bool sherlock = cost_r<cost_b || (cost_r==cost_b && cost_r%2==1);
+  int out = sherlock? 0 : 1;
+
+  std::cout << out << std::endl;
+  
 }
 
 
 
 int main(){
-  
-  // init
   std::ios_base::sync_with_stdio(false);
   int T; std::cin >> T;
-  
-  for (int t=0; t<T; t++){
-    int n; std::cin >> n; // # of nodes
-    int m; std::cin >> m; // # of transitions
-    int r; std::cin >> r; // position red
-    int b; std::cin >> b; // postion black
-    
-    AL graph(n); // adjacency list
-    
-    for (int i=0; i<m; i++){
-      int u; std::cin >> u;
-      int v; std::cin >> v;
-      graph[u].push_back(v);
-    }
-    
-    // memory containig distance to goal
-    std::vector<std::vector<int>> rmemo(2, std::vector<int>(n+1, -1)); 
-    rmemo[0][n] = 0;
-    rmemo[1][n] = 0;
-    // compute path from red
-    int r_path_cost = compute_rpath(graph, rmemo, r, 0);
-    
-    // memory containig distance to goal
-    std::vector<std::vector<int>> bmemo(2, std::vector<int>(n+1, -1)); 
-    bmemo[0][n] = 0;
-    bmemo[1][n] = 0;
-    // compute path from black
-    int b_path_cost = compute_bpath(graph, bmemo, b, 0);
-    
-    if (r_path_cost % 2 == 0){
-      if (r_path_cost < b_path_cost){
-        std::cout << 0 << std::endl;
-      }
-      else{
-        std::cout << 1 << std::endl;
-      }
-    }
-    else{
-      if (r_path_cost <= b_path_cost){
-        std::cout << 0 << std::endl;
-      }
-      else{
-        std::cout << 1 << std::endl;
-      }
-    }
-    
-    
-      
-  }
-  
+  while (T--) testcase();
   return 0;
 }
-
-
