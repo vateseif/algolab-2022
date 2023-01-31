@@ -1,4 +1,4 @@
-///3
+///1
 #include <iostream>
 #include <vector>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -38,21 +38,42 @@ std::vector<IPoint> points;
 
 
 int ncc(long s, const EdgeV& edges){
+  
+  
+  std::vector<int> count(n, 1);
   // setup and initialize union-find data structure
   boost::disjoint_sets_with_storage<> uf(n);
-  int f = n;
   // ... and process edges in order of increasing length
   for (EdgeV::const_iterator e = edges.begin(); e != edges.end(); ++e) {
     // squared length of edge
     long dd = std::get<2>(*e);
     // determine components of endpoints
-    Index c1 = uf.find_set(std::get<0>(*e));
-    Index c2 = uf.find_set(std::get<1>(*e));
+    Index i1 = std::get<0>(*e);
+    Index i2 = std::get<1>(*e);
+    Index c1 = uf.find_set(i1);
+    Index c2 = uf.find_set(i2);
     if (dd < s && c1 != c2) {
       // this edge connects two different components => part of the emst
       uf.link(c1, c2);
-      f--;
+      Index c3 = uf.find_set(i1);
+      int count1 = count[c1], count2 = count[c2];
+      count[c1] = 0; count[c2] = 0;
+      count[c3] = count1 + count2;
     }
+  }
+  
+  // sort count of tents in each component
+  std::sort(count.begin(), count.end());
+  int l = std::distance(count.begin(), std::upper_bound(count.begin(), count.end(), 0));
+  int r=n-1;
+  int f = 0;
+  while (l<=r){
+    int sum_count = count[r];
+    while(sum_count<k && l<r){
+      sum_count += count[l++];
+    }
+    if (sum_count>=k) f++;
+    r--;
   }
   return f;
 }
@@ -113,7 +134,7 @@ void testcase(){
 int main(){
   std::ios_base::sync_with_stdio(false);
   int T; std::cin >> T;
-  //T=2;
+  //T=1;
   while (T--) testcase();
   return 0;
 }
