@@ -1,4 +1,4 @@
-///1
+///4
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -8,20 +8,20 @@
 
 #define trace(x) std::cerr << #x << " = " << x << std::endl;
 
-struct MemoStruct{
-  int n_islands;
-  int island_id; // (0, island, -1)
-  MemoStruct(){};
-  MemoStruct(int ni, long idi){
-    n_islands = ni; island_id = idi;
+struct SetIsland{
+  int w; // waterway
+  int n; // number of consecutive islands apart from 0
+  long m; // sum of men includin men[0]
+  SetIsland(){};
+  SetIsland(int wi, int ni, long mi){
+    w=wi, n=ni, m=mi;
   }
 };
 
 
-std::vector<int> men;
+std::vector<long> men;
 std::vector<std::vector<int>> waterways;
-std::unordered_map<long, MemoStruct> memo;  // each num of soldiers store max number of islands and which (0, island, -1)
-
+std::vector<SetIsland> memo; // memo[i] = vector of pair (sum_men, waterway) for i islands
 
 
 void testcase(){
@@ -43,41 +43,55 @@ void testcase(){
     }
   }
 
-  int max_islands = 0;
-  // precomputation: find highest sequence on each waterway
-  // plus compute sum of men
+  
+  int max_islands = men[0]==k? 1:0;
   memo.clear();
   for (int i=0; i<w; i++){
-    int back = 0;
-    long sum_men = men[0];
-    if (sum_men == k) max_islands = std::max(max_islands, 1);
-    for (int j=1; j<waterways[i].size(); j++){
+    int l = 0;
+    long sum_men = 0;
+    for (int j=0; j<(int)waterways[i].size(); j++){
       int island = waterways[i][j];
-      // add men of jth island to current window
       sum_men += men[island];
-      // while sum of window greater than k remove islands
-      while (sum_men > k) sum_men -= men[waterways[i][back++]];
-      // if sum of window = k, check if there are more than max_islands
-      if (sum_men == k) max_islands = std::max(max_islands, j-back+1);
-      // compute sum up to island j of waterway i
-      if (back==0){
-        if (memo[sum_men].n_islands == j){
-          memo[sum_men] = MemoStruct(j, -1);
-        }else if(j > memo[sum_men].n_islands){
-          memo[sum_men] = MemoStruct(j, i);
+      while (sum_men>k) {sum_men-=men[waterways[i][l++]];}
+      if (sum_men==k) max_islands = std::max(j-l+1, max_islands);
+      if (l==0) memo.push_back(SetIsland(i, j+1, sum_men));
+    }
+  }
+
+  std::sort(memo.begin(), memo.end(), [](SetIsland a, SetIsland b) {
+        return a.m < b.m;   
+  });
+  
+  std::vector<std::vector<SetIsland>> is(1, {memo[0]});
+  for (int i=1; i<(int)memo.size()-1; i++){
+    if (memo[i-1].m==memo[i].m){
+      is.back().push_back(memo[i]);
+    } else{
+      is.push_back({memo[i]});
+    } 
+  }
+  
+  int l=0;
+  int r=is.size()-1;
+  long goal = k+men[0];
+  while (l<=r){
+    if (is[l][0].m + is[r][0].m < goal){
+      l++;
+    }else if(is[l][0].m + is[r][0].m > goal){
+      r--;
+    }else{
+      for (SetIsland sil : is[l]){
+        for (SetIsland sir : is[r]){
+          if (sil.w != sir.w){
+            max_islands = std::max(max_islands, sil.n + sir.n - 1);
+          }
         }
       }
+      l++; r--;
     }
   }
 
-  int i = men[0];
-  while (i < k-i+men[0]){
-    if (memo[i].island_id==-1 || memo[k-i+men[0]].island_id==-1 || memo[i].island_id!=memo[k-i+men[0]].island_id){
-      max_islands = std::max(max_islands, memo[i].n_islands+memo[k-i+men[0]].n_islands-1);
-    }
-    i++;
-  }
-
+  
   std::cout << max_islands << std::endl;
 
   return;
