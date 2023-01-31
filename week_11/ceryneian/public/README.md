@@ -1,5 +1,5 @@
 # Ceryneaian Hind
-
+Tags: mincost/max-flow, closure problem
 ## Problem
 Given a graph with weighted nodes, find a nonempty subset of nodes that maximizes the weight with the constraint that no node in the subset connects to a node in the complementary subset.
 
